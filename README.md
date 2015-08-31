@@ -31,7 +31,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/PDqsga9.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -47,7 +47,7 @@ Challenges encountered while building the app:
 
 ## License
 
-    Copyright [yyyy] [name of copyright owner]
+    Copyright Todo Android by Kenneth Ng
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -61,16 +61,3 @@ Challenges encountered while building the app:
     See the License for the specific language governing permissions and
     limitations under the License.
 
-
-
-Android Simple todo
-====================
-
-A simple android todo list that allow user to add, edit and remove items from this list.
-
-Currently we are doing the basic functionality without intense UI funcationality.  For future release, we will add the follow function :
-
-- Launcher icons
-- Action bar icons
-- Notification icons
-- SQLite integration
