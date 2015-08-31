@@ -1,5 +1,6 @@
 package com.iconcells.simpletodo;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -22,20 +24,20 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+    Integer ItemPos;
+    private final int REQUEST_CODE = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Simple Todo");
         setContentView(R.layout.activity_main);
 
         lvItems = (ListView) findViewById(R.id.lvItems);
-        //items = new ArrayList<String>();
 
         readItems();
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
-        //items.add("First Item");
-        //items.add("Second Item");
         setupListViewListener();
     }
 
@@ -51,6 +53,39 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String item = (String) parent.getItemAtPosition(position);
+                Intent i = new Intent(MainActivity.this, EditItemActivity.class);
+                //i.putExtra("position", position);
+                ItemPos = position;
+                i.putExtra("SelectedItem", item);
+                startActivityForResult(i, REQUEST_CODE);
+
+            }
+        });
+    }
+
+    // callback after Item update
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE){
+            String newItem = data.getExtras().getString("newItemText");
+
+            //update the element in arraylist.
+            items.set(ItemPos, newItem);
+            itemsAdapter.notifyDataSetChanged();
+            writeItems();
+
+            int code = data.getExtras().getInt("code", 0);
+
+            //NewItem Update display
+            Toast.makeText(this, newItem + " updated", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onAddItem(View v){
@@ -101,6 +136,6 @@ public class MainActivity extends AppCompatActivity {
         } catch(IOException e){
             e.printStackTrace();
         }
-
     }
+
 }
