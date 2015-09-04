@@ -29,7 +29,7 @@ The following **additional** features are implemented:
 
 ## Video Walkthrough 
 
-Here's a walkthrough of implemented user stories:
+Here's a walkthrough of implemented Simple Todo for Android:
 
 <img src='http://i.imgur.com/PDqsga9.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 

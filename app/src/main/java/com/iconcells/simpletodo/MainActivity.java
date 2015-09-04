@@ -1,8 +1,11 @@
 package com.iconcells.simpletodo;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +20,9 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,9 +41,12 @@ public class MainActivity extends AppCompatActivity {
         lvItems = (ListView) findViewById(R.id.lvItems);
 
         readItems();
+        Log.d("items: ", items.toString());
+
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
+
     }
 
     public void setupListViewListener(){
@@ -64,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
                 ItemPos = position;
                 i.putExtra("SelectedItem", item);
                 startActivityForResult(i, REQUEST_CODE);
-
             }
         });
     }
@@ -118,7 +125,59 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void readItems(){
+        //readItemsUsingFile();
+        dbGetAll();
+    }
+    private void writeItems(){
+        //writeItemsUsingFile();
+        dbSetAll();
+    }
+
+    //Read Write using SQLite DB
+    private static final String SAMPLE_DB_NAME = "todoandroid.db";
+    private static final String SAMPLE_TABLE_NAME = "todoitems";
+    private static SQLiteDatabase sampleDB;
+
+    public void dbGetAll(){
+        items = new ArrayList<String>();
+
+        sampleDB = this.openOrCreateDatabase(SAMPLE_DB_NAME, MODE_PRIVATE, null);
+        sampleDB.execSQL("CREATE TABLE IF NOT EXISTS " +
+                SAMPLE_TABLE_NAME +
+                " (ItemName VARCHAR, Details VARCHAR," +
+                " Rank VARCHAR);");
+
+        String sql = "SELECT ItemName FROM " + SAMPLE_TABLE_NAME + ";";
+
+        String[] dbResult = {};
+        items = new ArrayList<String>();
+
+        Cursor c = sampleDB.rawQuery(sql, null);
+        while(c.moveToNext()) {
+            items.add(c.getString(0));
+        }
+        sampleDB.close();
+        Toast.makeText(this, "Items loaded from DB!", Toast.LENGTH_LONG).show();
+
+    }
+    public void dbSetAll(){
+        sampleDB = this.openOrCreateDatabase(SAMPLE_DB_NAME, MODE_PRIVATE, null);
+        sampleDB.execSQL("DELETE FROM " +
+                SAMPLE_TABLE_NAME + ";");
+
+        Iterator<String> i = items.iterator();
+        while(i.hasNext()) {
+            sampleDB.execSQL("INSERT INTO " +
+                    SAMPLE_TABLE_NAME +
+                    " Values ('" + i.next() + "','','');");
+        }
+        sampleDB.close();
+    }
+
+    // Read Write using File
+    private void readItemsUsingFile(){
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try{
@@ -128,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void writeItems(){
+    private void writeItemsUsingFile(){
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try{
